@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tubidy Music Downloader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .output {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tubidy Music Downloader</h1>
+  <div class="container">
+    <p>Enter the Tubidy music URL below to download:</p>
+    <input type="text" id="tubidyUrl" placeholder="Paste Tubidy URL here" />
+    <button id="downloadButton">Download</button>
+    <div class="output" id="output"></div>
+  </div>
+
+  <script>
+    document.getElementById('downloadButton').addEventListener('click', function () {
+      const url = document.getElementById('tubidyUrl').value;
+      const output = document.getElementById('output');
+
+      if (!url) {
+        output.textContent = 'Please enter a valid Tubidy URL.';
+        return;
+      }
+
+      output.textContent = 'Processing your download... Please wait.';
+
+      // Call the backend server to handle the download
+      fetch('http://localhost:5000/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            output.innerHTML = `<a href="${data.file}" download>Click here to download your file</a>`;
+          } else {
+            output.textContent = 'Failed to process the download. Please try again.';
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          output.textContent = 'An error occurred. Please try again later.';
+        });
+    });
+  </script>
+</body>
+</html>
